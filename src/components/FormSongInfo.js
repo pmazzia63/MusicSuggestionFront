@@ -19,23 +19,17 @@ function FormSongInfo({ setResults }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        fetch('http://13.37.217.48:8000/register/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify()
-            })
-            .then(response => response.json()) // Convert the response data to JSON
-            .then(data => {
-                console.log('Success:', data);
-                alert(data.message);
+        axios.post('http://13.37.217.48:8000/songs/', song)
+            .then(response => {
+                console.log('Similar Songs:', response.data);
+                alert('Similar songs found successfully!');
+                setResults(response.data)
+                // Optionally, process and display the similar songs data here
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to register user');
+                alert('Failed to find similar songs');
             });
-        
     };
 
     return (
