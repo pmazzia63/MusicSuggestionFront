@@ -26,7 +26,7 @@ function FormUserInfo() {
             age: parseInt(user.age, 10)
         };
 
-        axios.post('https://cors-everywhere.herokuapp.com/http://13.37.217.48:8000/register/', userData)
+        axios.post('http://13.37.217.48:8000/register/', userData)
             .then(response => {
                 console.log('Success:', response.data);
                 alert(response.data.message);

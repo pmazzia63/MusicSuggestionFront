@@ -19,7 +19,7 @@ function FormSongInfo({ setResults }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        axios.post('https://cors-everywhere.herokuapp.com/http://13.37.217.48:8000/songs/', song)
+        axios.post('http://13.37.217.48:8000/songs/', song)
             .then(response => {
                 console.log('Similar Songs:', response.data);
                 alert('Similar songs found successfully!');
