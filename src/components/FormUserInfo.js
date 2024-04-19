@@ -1,35 +1,91 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 function FormUserInfo() {
-    const [prenom, setPrenom] = useState('');
-    const [nom, setNom] = useState('');
-    const [age, setAge] = useState('');
-    const [email, setEmail] = useState(''); // Ajout de l'état pour l'email
+    const [user, setUser] = useState({
+        first_name: '',
+        last_name: '',
+        age: '',
+        email: ''
+    });
 
-    const handleSubmit = async (e) => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setUser(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = (e) => {
         e.preventDefault();
-        // Envoyer une requête POST à l'API à l'adresse spécifiée avec l'email inclus
-        const response = await fetch('http://13.37.217.48:8000/register/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ prenom, nom, age, email }) // Inclure l'email dans le corps de la requête
-        });
 
-        const data = await response.json();
-        console.log(data); // Traitez les données reçues si nécessaire
+        // Convert age to an integer
+        const userData = {
+            ...user,
+            age: parseInt(user.age, 10)
+        };
+
+        axios.post('http://13.37.217.48:8000/register/', userData)
+            .then(response => {
+                console.log('Success:', response.data);
+                alert(response.data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to register user');
+            });
     };
 
     return (
         <form onSubmit={handleSubmit}>
-            <input type="text" placeholder="Prénom" value={prenom} onChange={(e) => setPrenom(e.target.value)} />
-            <input type="text" placeholder="Nom" value={nom} onChange={(e) => setNom(e.target.value)} />
-            <input type="number" placeholder="Âge" value={age} onChange={(e) => setAge(e.target.value)} />
-            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} /> {/* Champ pour l'email */}
-            <button type="submit">Envoyer</button>
+            <div>
+                <label htmlFor="first_name">First Name:</label>
+                <input
+                    type="text"
+                    id="first_name"
+                    name="first_name"
+                    value={user.first_name}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <div>
+                <label htmlFor="last_name">Last Name:</label>
+                <input
+                    type="text"
+                    id="last_name"
+                    name="last_name"
+                    value={user.last_name}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <div>
+                <label htmlFor="age">Age:</label>
+                <input
+                    type="number"
+                    id="age"
+                    name="age"
+                    value={user.age}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <div>
+                <label htmlFor="email">Email:</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={user.email}
+                    onChange={handleChange}
+                    required
+                />
+            </div>
+            <button type="submit">Register User</button>
         </form>
     );
-}
+};
 
 export default FormUserInfo;

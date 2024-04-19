@@ -1,92 +1,64 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Data from '../data/big_dict.json';
 
-function FormSongInfo() {
-    const [song, setSong] = useState('');
-    const [artist, setArtist] = useState('');
-    const [suggestions, setSuggestions] = useState([]);
-    const [artistSongs, setArtistSongs] = useState([]);
+function FormSongInfo({ setResults }) {
+    const [song, setSong] = useState({
+        artist: '',
+        track: ''
+    });
 
-    useEffect(() => {
-        if (song.length > 1) {
-            const filteredSongs = Object.keys(Data.songs)
-                .filter(songName => songName.toLowerCase().includes(song.toLowerCase()))
-                .map(filteredName => ({
-                    name: filteredName,
-                    artist: Data.songs[filteredName]
-                }));
-
-            setSuggestions(filteredSongs);
-        } else {
-            setSuggestions([]);
-        }
-    }, [song]);
-
-    useEffect(() => {
-        if (artist.length > 1) {
-            const songsByArtist = Data.artist[artist]?.map(songName => ({
-                name: songName,
-                artist: artist
-            })) || [];
-            
-            setArtistSongs(songsByArtist);
-        } else {
-            setArtistSongs([]);
-        }
-    }, [artist]);
-
-    const handleSearchSong = (e) => {
-        const query = e.target.value;
-        setSong(query);
-    };
-
-    const handleSearchArtist = (e) => {
-        const query = e.target.value;
-        setArtist(query);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setSong(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Envoyez la chanson ou l'artiste sélectionné
+
+        axios.post('http://13.37.217.48:8000/songs/', song)
+            .then(response => {
+                console.log('Similar Songs:', response.data);
+                alert('Similar songs found successfully!');
+                setResults(response.data)
+                // Optionally, process and display the similar songs data here
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to find similar songs');
+            });
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label htmlFor="artist">Artist:</label>
                 <input
                     type="text"
-                    placeholder="Chercher une chanson"
-                    value={song}
-                    onChange={handleSearchSong}
+                    id="artist"
+                    name="artist"
+                    value={song.artist}
+                    onChange={handleChange}
+                    required
                 />
-                <ul>
-                    {suggestions.map((item, index) => (
-                        <li key={index} onClick={() => setSong(item.name)}>
-                            {item.name} - {item.artist}
-                        </li>
-                    ))}
-                </ul>
-                <button type="submit">Envoyer</button>
-            </form>
-
-            <form onSubmit={handleSubmit}>
+            </div>
+            <div>
+                <label htmlFor="track">Track:</label>
                 <input
                     type="text"
-                    placeholder="Chercher un artiste"
-                    value={artist}
-                    onChange={handleSearchArtist}
+                    id="track"
+                    name="track"
+                    value={song.track}
+                    onChange={handleChange}
+                    required
                 />
-                <ul>
-                    {artistSongs.map((item, index) => (
-                        <li key={index} onClick={() => setSong(item.name)}>
-                            {item.name}
-                        </li>
-                    ))}
-                </ul>
-                <button type="submit">Envoyer</button>
-            </form>
-        </div>
+            </div>
+            <button type="submit">Find Similar Songs</button>
+        </form>
     );
-}
+};
 
 export default FormSongInfo;
