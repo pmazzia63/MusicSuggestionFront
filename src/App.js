@@ -2,6 +2,7 @@ import React from 'react';
 import FormUserInfo from './components/FormUserInfo';
 import FormSongInfo from './components/FormSongInfo';
 import DisplayResults from './components/DisplayResults';
+import './App.css';
 
 function App() {
     return (
