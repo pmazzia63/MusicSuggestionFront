@@ -4,16 +4,17 @@ function FormUserInfo() {
     const [prenom, setPrenom] = useState('');
     const [nom, setNom] = useState('');
     const [age, setAge] = useState('');
+    const [email, setEmail] = useState(''); // Ajout de l'état pour l'email
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Ici, envoyez une requête POST à votre API
-        const response = await fetch('URL_DE_VOTRE_API', {
+        // Envoyer une requête POST à l'API à l'adresse spécifiée avec l'email inclus
+        const response = await fetch('http://13.37.217.48:8000/register/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ prenom, nom, age })
+            body: JSON.stringify({ prenom, nom, age, email }) // Inclure l'email dans le corps de la requête
         });
 
         const data = await response.json();
@@ -25,6 +26,7 @@ function FormUserInfo() {
             <input type="text" placeholder="Prénom" value={prenom} onChange={(e) => setPrenom(e.target.value)} />
             <input type="text" placeholder="Nom" value={nom} onChange={(e) => setNom(e.target.value)} />
             <input type="number" placeholder="Âge" value={age} onChange={(e) => setAge(e.target.value)} />
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} /> {/* Champ pour l'email */}
             <button type="submit">Envoyer</button>
         </form>
     );
